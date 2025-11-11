@@ -3,6 +3,7 @@
 namespace Sunnysideup\ExternalURLField;
 
 use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\UrlField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 
@@ -11,7 +12,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  *
  * Form field for entering, saving, validating external urls.
  */
-class ExternalURLField extends TextField
+class ExternalURLField extends UrlField
 {
     /**
      * @var array
@@ -164,7 +165,7 @@ class ExternalURLField extends TextField
             return false;
         }
 
-        return true;
+        return parent::validate($validator);
     }
 
     public function RightTitle()
