@@ -148,4 +148,9 @@ class ExternalURL extends DBVarchar
         }
         parent::saveInto($dataObject);
     }
+
+    public function Icon(): string
+    {
+        return 'https://icons.duckduckgo.com/ip3/' . $this->DomainShort() . '.ico';
+    }
 }
