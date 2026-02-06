@@ -15,19 +15,6 @@ class ExternalURL extends DBVarchar
     ];
 
     /**
-     * 2083 is the lowest common denominator when it comes to url lengths.
-     * however, 768 allows searching...
-     *
-     * @param null|mixed $name
-     * @param mixed      $size
-     * @param mixed      $options
-     */
-    public function __construct($name = null, $size = 2083, $options = [])
-    {
-        parent::__construct($name, $size, $options);
-    }
-
-    /**
      * Remove ugly parts of a url to make it nice.
      */
     public function Nice(): string
