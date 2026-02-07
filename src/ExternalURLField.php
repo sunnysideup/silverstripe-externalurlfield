@@ -2,7 +2,6 @@
 
 namespace Sunnysideup\ExternalURLField;
 
-use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\UrlField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
