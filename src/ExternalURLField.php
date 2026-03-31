@@ -3,6 +3,7 @@
 namespace Sunnysideup\ExternalURLField;
 
 use Override;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Forms\UrlField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
@@ -155,21 +156,21 @@ class ExternalURLField extends UrlField
      * @param mixed $validator
      */
     #[Override]
-    public function validate($validator)
+    public function validate(): ValidationResult
     {
+        $valid = parent::validate();
+
         $this->value = trim(string: (string) $this->value);
         $regex = $this->config['validregex'];
         if ($this->value && $regex && ! preg_match($regex, $this->value)) {
-            $validator->validationError(
+            $valid->addError(
                 $this->name,
                 _t('ExternalURLField.VALIDATION', 'Please enter a valid URL'),
                 'validation'
             );
-
-            return false;
         }
 
-        return parent::validate($validator);
+        return $valid;
     }
 
     #[Override]

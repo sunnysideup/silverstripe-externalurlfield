@@ -4,6 +4,7 @@ namespace Sunnysideup\ExternalURLField;
 
 use Override;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FormField;
 use SilverStripe\ORM\FieldType\DBVarchar;
 
 class ExternalURL extends DBVarchar
@@ -88,7 +89,7 @@ class ExternalURL extends DBVarchar
      * @param null|mixed $params
      */
     #[Override]
-    public function scaffoldFormField($title = null, $params = null)
+    public function scaffoldFormField($title = null, $params = null): ?FormField
     {
         $field = ExternalURLField::create($this->name, $title);
         $field->setMaxLength($this->getSize());
@@ -97,7 +98,7 @@ class ExternalURL extends DBVarchar
     }
 
     #[Override]
-    public function forTemplate()
+    public function forTemplate(): string
     {
         if ($this->value) {
             return (string) $this->URL();
@@ -107,7 +108,7 @@ class ExternalURL extends DBVarchar
     }
 
     #[Override]
-    public function saveInto($dataObject)
+    public function saveInto($dataObject): void
     {
         $url = (string) $this->value;
         if ($url !== '' && $url !== '0') {
