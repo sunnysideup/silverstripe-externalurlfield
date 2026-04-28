@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sunnysideup\ExternalURLField\Tests;
 
 use SilverStripe\Dev\SapphireTest;
@@ -14,7 +16,7 @@ class ExternalURLTest extends SapphireTest
 {
     public function testDefault()
     {
-        $f = new ExternalURL('MyField');
+        $f = ExternalURL::create('MyField');
         $f->setValue('http://username:password@www.hostname.com:81/path?arg=value#anchor');
         $this->assertEquals(
             'http://username:password@www.hostname.com:81/path?arg=value#anchor',
@@ -25,21 +27,21 @@ class ExternalURLTest extends SapphireTest
 
     public function testNice()
     {
-        $f = new ExternalURL('MyField');
+        $f = ExternalURL::create('MyField');
         $f->setValue('http://username:password@www.hostname.com:81/path?arg=value#anchor');
         $this->assertEquals('www.hostname.com/path', $f->Nice());
     }
 
     public function testDomain()
     {
-        $f = new ExternalURL('MyField');
+        $f = ExternalURL::create('MyField');
         $f->setValue('http://username:password@www.hostname.com:81/path?arg=value#anchor');
         $this->assertEquals('www.hostname.com', $f->Domain());
     }
 
     public function testScaffolding()
     {
-        $f = new ExternalURL('MyField');
+        $f = ExternalURL::create('MyField');
         $field = $f->scaffoldFormField();
         $this->assertInstanceOf(ExternalURLField::class, $field);
         $this->assertEquals(2083, $field->getMaxLength());

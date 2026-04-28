@@ -89,7 +89,7 @@ class ExternalURL extends DBVarchar
      * @param null|mixed $params
      */
     #[Override]
-    public function scaffoldFormField($title = null, $params = null): ?FormField
+    public function scaffoldFormField(?string $title = null, array $params = []): ?FormField
     {
         $field = ExternalURLField::create($this->name, $title);
         $field->setMaxLength($this->getSize());

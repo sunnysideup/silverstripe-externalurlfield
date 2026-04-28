@@ -2,8 +2,8 @@
 
 namespace Sunnysideup\ExternalURLField\Tests;
 
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Forms\RequiredFields;
 use Sunnysideup\ExternalURLField\ExternalURLField;
 
 /**
@@ -14,7 +14,7 @@ class ExternalURLFieldTest extends SapphireTest
 {
     public function testSetConfig()
     {
-        $field = new ExternalURLField('URL', 'URL');
+        $field = ExternalURLField::create('URL', 'URL');
 
         //test example from README
         $field->setConfig([
@@ -66,7 +66,7 @@ class ExternalURLFieldTest extends SapphireTest
 
     public function testDefaultSaving()
     {
-        $field = new ExternalURLField('URL', 'URL');
+        $field = ExternalURLField::create('URL', 'URL');
 
         $field->setValue(
             'http://username:password@www.hostname.com:81/path?arg=value#anchor'
@@ -88,21 +88,21 @@ class ExternalURLFieldTest extends SapphireTest
 
     public function testValidation()
     {
-        $field = new ExternalURLField('URL', 'URL');
-        $validator = new RequiredFields();
+        $field = ExternalURLField::create('URL', 'URL');
+        $validator = RequiredFieldsValidator::create();
 
         $field->setValue(
             'http://username:password@www.hostname.com:81/path?arg=value#anchor'
         );
-        $this->assertTrue($field->validate($validator));
+        $this->assertTrue($field->validate());
 
         $field->setValue('');
-        $this->assertTrue($field->validate($validator));
+        $this->assertTrue($field->validate());
 
         $field->setValue('asefasdfasfasfasfasdfasfasdfas');
-        $this->assertFalse($field->validate($validator));
+        $this->assertFalse($field->validate());
 
         $field->setValue('http://3628126748');
-        $this->assertFalse($field->validate($validator));
+        $this->assertFalse($field->validate());
     }
 }
