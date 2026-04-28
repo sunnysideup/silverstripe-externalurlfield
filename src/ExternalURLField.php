@@ -158,26 +158,34 @@ class ExternalURLField extends UrlField
     #[Override]
     public function validate(): ValidationResult
     {
-        $valid = parent::validate();
+        $result = parent::validate();
 
-        $this->value = trim(string: (string) $this->value);
+        /**
+         * @deprecated FormField::Value() has been deprecated. It will be replaced by getFormattedValue() and getValue().
+         * See: https://docs.silverstripe.org/en/5/changelogs/5.4.0/#deprecated-api
+         */
+        $this->value = trim(string: (string) $this->getValue());
         $regex = $this->config['validregex'];
         if ($this->value && $regex && ! preg_match($regex, $this->value)) {
-            $valid->addError(
+            $result->addError(
                 $this->name,
                 _t('ExternalURLField.VALIDATION', 'Please enter a valid URL'),
                 'validation'
             );
         }
 
-        return $valid;
+        return $result;
     }
 
     #[Override]
     public function RightTitle()
     {
-        if ($this->value) {
-            return DBHTMLText::create_field(DBHTMLText::class, parent::RightTitle() . '<a href="' . $this->value . '" target="_blank" onclick="event.stopPropagation();"rel="noreferrer noopener">open ↗</a>');
+        if ($this->getValue()()) {
+            /**
+             * @deprecated FormField::Value() has been deprecated. It will be replaced by getFormattedValue() and getValue().
+             * See: https://docs.silverstripe.org/en/5/changelogs/5.4.0/#deprecated-api
+             */
+            return DBHTMLText::create_field(DBHTMLText::class, parent::RightTitle() . '<a href="' . $this->getValue() . '" target="_blank" onclick="event.stopPropagation();"rel="noreferrer noopener">open ↗</a>');
         }
 
         return parent::RightTitle();
