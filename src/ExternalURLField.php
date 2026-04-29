@@ -180,7 +180,7 @@ class ExternalURLField extends UrlField
     #[Override]
     public function RightTitle()
     {
-        if ($this->getValue()()) {
+        if ($this->getValue()) {
             /**
              * @deprecated FormField::Value() has been deprecated. It will be replaced by getFormattedValue() and getValue().
              * See: https://docs.silverstripe.org/en/5/changelogs/5.4.0/#deprecated-api
