@@ -122,7 +122,7 @@ class ExternalURLField extends UrlField
         if ($this->config['html5validation']) {
             $attributes += [
                 'type' => 'url', //html5 field type
-                'pattern' => 'https?://.+', //valid urls only
+                'pattern' => 'https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?', //valid urls only
             ];
         }
 
@@ -168,9 +168,8 @@ class ExternalURLField extends UrlField
         $regex = $this->config['validregex'];
         if ($this->value && $regex && ! preg_match($regex, $this->value)) {
             $result->addError(
-                $this->name,
                 _t('ExternalURLField.VALIDATION', 'Please enter a valid URL'),
-                'validation'
+                ValidationResult::TYPE_ERROR
             );
         }
 
@@ -181,11 +180,7 @@ class ExternalURLField extends UrlField
     public function RightTitle()
     {
         if ($this->getValue()) {
-            /**
-             * @deprecated FormField::Value() has been deprecated. It will be replaced by getFormattedValue() and getValue().
-             * See: https://docs.silverstripe.org/en/5/changelogs/5.4.0/#deprecated-api
-             */
-            return DBHTMLText::create_field(DBHTMLText::class, parent::RightTitle() . '<a href="' . $this->getValue() . '" target="_blank" onclick="event.stopPropagation();"rel="noreferrer noopener">open ↗</a>');
+            return DBHTMLText::create_field(DBHTMLText::class, parent::RightTitle() . '<a href="' . $this->getValue() . '" class="external-url-link" target="_blank" onclick="event.stopPropagation();"rel="noreferrer noopener">open ↗</a>');
         }
 
         return parent::RightTitle();
