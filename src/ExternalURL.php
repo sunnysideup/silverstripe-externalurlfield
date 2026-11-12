@@ -5,6 +5,7 @@ namespace Sunnysideup\ExternalURLField;
 use Override;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FormField;
+use SilverStripe\Core\Convert;
 use SilverStripe\ORM\FieldType\DBVarchar;
 
 class ExternalURL extends DBVarchar
@@ -101,7 +102,8 @@ class ExternalURL extends DBVarchar
     public function forTemplate(): string
     {
         if ($this->value) {
-            return (string) $this->URL();
+            // this is output in templates, so it must be escaped.
+            return Convert::raw2xml((string) $this->URL());
         }
 
         return '';
@@ -119,6 +121,11 @@ class ExternalURL extends DBVarchar
             }
 
             $parts = parse_url($url);
+            // only http(s): no javascript:, data: and the like.
+            if ($parts && isset($parts['scheme']) && ! in_array(strtolower((string) $parts['scheme']), ['http', 'https'], true)) {
+                $parts = false;
+            }
+
             if ($parts) {
                 //can't parse url, abort
 

@@ -4,6 +4,7 @@ namespace Sunnysideup\ExternalURLField;
 
 use Override;
 use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Convert;
 use SilverStripe\Forms\UrlField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
@@ -44,7 +45,7 @@ class ExternalURLField extends UrlField
             'fragment' => false,
         ],
         'html5validation' => true,
-        'validregex' => '%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)'
+        'validregex' => '%^(?:(?:https?)://)(?:\S+(?::\S*)'
             . '?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)'
             . '(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))'
             . '(?::\d+)?(?:[^\s]*)?$%iu',
@@ -166,6 +167,17 @@ class ExternalURLField extends UrlField
          */
         $this->value = trim(string: (string) $this->getValue());
         $regex = $this->config['validregex'];
+        // never allow quotes, angle brackets, backticks or whitespace in a url (they break out of html attributes),
+        // and only http(s) urls are valid.
+        if ($this->value && (preg_match('/[\s"\'<>`]/u', (string) $this->value) || ! preg_match('#^https?://#i', (string) $this->value))) {
+            $result->addError(
+                _t('ExternalURLField.VALIDATION', 'Please enter a valid URL'),
+                ValidationResult::TYPE_ERROR
+            );
+
+            return $result;
+        }
+
         if ($this->value && $regex && ! preg_match($regex, $this->value)) {
             $result->addError(
                 _t('ExternalURLField.VALIDATION', 'Please enter a valid URL'),
@@ -179,8 +191,9 @@ class ExternalURLField extends UrlField
     #[Override]
     public function RightTitle()
     {
-        if ($this->getValue()) {
-            return DBHTMLText::create_field(DBHTMLText::class, parent::RightTitle() . '<a href="' . $this->getValue() . '" class="external-url-link" target="_blank" onclick="event.stopPropagation();"rel="noreferrer noopener">open ↗</a>');
+        // only link to http(s) urls and always escape the value for use in an attribute.
+        if ($this->getValue() && preg_match('#^https?://#i', (string) $this->getValue())) {
+            return DBHTMLText::create_field(DBHTMLText::class, parent::RightTitle() . '<a href="' . Convert::raw2att((string) $this->getValue()) . '" target="_blank" onclick="event.stopPropagation();" rel="noreferrer noopener">open ↗</a>');
         }
 
         return parent::RightTitle();
@@ -206,6 +219,11 @@ class ExternalURLField extends UrlField
         $parts = parse_url((string) $url);
         if (! $parts) {
             //can't parse url, abort
+            return '';
+        }
+
+        // only http(s): no javascript:, data: and the like.
+        if (isset($parts['scheme']) && ! in_array(strtolower((string) $parts['scheme']), ['http', 'https'], true)) {
             return '';
         }
 
